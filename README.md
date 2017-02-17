@@ -29,8 +29,10 @@ There are many things you can do with this dataset. Here are a few structured ta
 1. Export the "flattened" table to a CSV file.
 1. Import the "flattened" table (or CSV file) into your open source analytic environment of choice (R, Python, Java, etc.) and stage it for analysis.
 1. Perform some simple exploratory analysis and generate summary statistics to get a sense of what is in the data.
+    * You should commit any useful or informative exploratory code.
 1. Split the data into training, validation, and test data sets. 
 1. Develop a model that predicts whether individuals, based on the census variables provided, make over $50,000/year. Use `over_50k` as the target variable. 
+    * Commit enough code to reproduce your full model selection process, including your final model and all models developed along the way.
 1. Generate a chart that you feel conveys 1 or more important relationships in the data.
 1. Describe your methodology and results in 1/2 page of writing.
     * Include the chart(s) generated in Step 7 as part of your write-up. If neccesary, explain how the chart(s) informs your approach. 
