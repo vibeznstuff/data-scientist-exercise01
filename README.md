@@ -7,12 +7,12 @@ Welcome to Exercise 01. This exercise provides a small SQLite database with some
 ### Some guidance
 
 1. Use open source tools, such as Python, R, or Java. Do not use proprietary tools, such as SAS, SPSS, JMP, Tableau, or Stata. 
-2. Fork this repository to your personal GitHub account and clone the fork to your computer.
-3. Save and commit your answers to your fork of the repository, and push them back to your personal GitHub account. You can then provide a link to that fork of the repository if you need to show a code example.
-4. Use the Internet as a resource to help you complete your work. We do it all the time.
-5. Comment your code so that when you look back at it in a year, you'll remember what you were doing.
-6. There are many ways to approach and solve the problems presented in this exercise.
-7. Have fun!
+1. Fork this repository to your personal GitHub account and clone the fork to your computer.
+1. Save and commit your answers to your fork of the repository, and push them back to your personal GitHub account. You can then provide a link to that fork of the repository if you need to show a code example.
+1. Use the Internet as a resource to help you complete your work. We do it all the time.
+1. Comment your code so that when you look back at it in a year, you'll remember what you were doing.
+1. There are many ways to approach and solve the problems presented in this exercise.
+1. Have fun!
 
 [SQLite Manager](https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/) is a fantastic free extension to Firefox that enables you to open and explore SQLite databases. We use it often.
 
@@ -24,15 +24,15 @@ Google will point you to popular libraries for connecting to SQLite databases fr
 
 There are many things you can do with this dataset. Here are a few structured tasks to attempt:
 
-0. Read the section below about **The Data**.
+1. Read the section below about **The Data**.
 1. Write a SQL query that creates a consolidated dataset from the normalized tables in the database. In other words, write a SQL query that "flattens" the database to a single table.
-2. Export the "flattened" table to a CSV file.
-3. Import the "flattened" table (or CSV file) into your open source analytic environment of choice (R, Python, Java, etc.) and stage it for analysis.
-4. Perform some simple exploratory analysis and generate summary statistics to get a sense of what is in the data.
-5. Split the data into training, validation, and test data sets. 
-6. Develop a model that predicts whether individuals, based on the census variables provided, make over $50,000/year. Use `over_50k` as the target variable. 
-7. Generate a chart that you feel conveys 1 or more important relationships in the data.
-8. Describe your methodology and results in 1/2 page of writing.
+1. Export the "flattened" table to a CSV file.
+1. Import the "flattened" table (or CSV file) into your open source analytic environment of choice (R, Python, Java, etc.) and stage it for analysis.
+1. Perform some simple exploratory analysis and generate summary statistics to get a sense of what is in the data.
+1. Split the data into training, validation, and test data sets. 
+1. Develop a model that predicts whether individuals, based on the census variables provided, make over $50,000/year. Use `over_50k` as the target variable. 
+1. Generate a chart that you feel conveys 1 or more important relationships in the data.
+1. Describe your methodology and results in 1/2 page of writing.
     * Include the chart(s) generated in Step 7 as part of your write-up. If neccesary, explain how the chart(s) informs your approach. 
 
 _Additional Context:_
