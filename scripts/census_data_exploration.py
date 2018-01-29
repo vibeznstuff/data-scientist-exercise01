@@ -2,19 +2,11 @@ import pandas as pd, numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-#Import flattened CSV census data into dataframe
-df = pd.read_csv('../output/flattened_census_data.csv')
+#Import custom module with standard data prep functions
+import prepare_data as prep 
 
-#Create new helpful features
-def cat_target(row):
-    if row['over_50k'] == 0:
-        return 'False'
-    elif row['over_50k'] == 1:
-        return 'True' 
-    else:
-        return np.NaN
-
-df['over_50_bool'] = df.apply(cat_target, axis=1)
+#Load census data as pandas dataframe
+df = prep.load_census_data()
 
 #Sort out numeric and categorical fields for processing
 exclude_vars = ['over_50k','respondent_id']
@@ -28,8 +20,6 @@ print("\n")
 print("Categorical Vars:  ")
 print(cat_vars)
 
-#Create Data Exploration Charts
-rows,cols = df.shape
 sns.set_style("whitegrid")
 
 #Create one-way frequencies for categorical vars
