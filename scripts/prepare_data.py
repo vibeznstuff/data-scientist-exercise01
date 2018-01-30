@@ -40,5 +40,39 @@ def load_census_data():
 	df['over_50_bool'] = df.apply(cat_target, axis=1)
 	return df
 	
+#Load modified census data after data cleaning and feature engineering steps
+def load_mod_census_data():
+	#Import flattened CSV census data into dataframe
+	df = pd.read_csv('../output/engineered_census_data.csv')
+	return df
+	
+#Function to convert variable into a boolean (string)
+def bool_my_feature(row,in_var,threshold):
+	if row[in_var] > threshold:
+		return 'True'
+	elif row[in_var] <= threshold:
+		return 'False' 
+	else:
+		return np.NaN
+
+#Function to categorize numeric variable into bins
+def bin_my_feature(row,in_var,bin_list):
+	bin_list.sort() #Just in case
+	out_label = np.NaN #If field doesn't match any bins
+	n = len(bin_list)-1 #Max index
+	for i in list(range(0,n+1)):
+		if i < n:
+			#Lower and upper ends of bin
+			x,y = bin_list[i:i+2] 
+		if i == 0 and row[in_var] <= bin_list[i]:
+			#Value is less than min bin value
+			out_label = '<=' + str(bin_list[i])
+		elif i == n and row[in_var] >= bin_list[i]:
+			#Value is greater than max bin value
+			out_label = '>=' + str(bin_list[i])
+		elif i < n and row[in_var] >= x and row[in_var] < y:
+			out_label = str(x) + ' - ' + str(y)
+	return out_label
+	
 
 
