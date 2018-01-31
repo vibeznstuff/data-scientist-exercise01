@@ -31,23 +31,43 @@ print(str(len(test)) + ' records for testing model')
 model_features = [('age_bins','age'),('education_num_gt_12','ed_lvl'), \
 	('hours_week_gt_40','hr_per_week'), ('cap_gain_gt_0','cap_gain'), \
 	('sex','sex'), ('race','race'),('occupation','occup'), \
-	('relationship','ship'),('marital_status','MS')]
+	('marital_status','MS')]
 
 #Assign conditional probabilities to validation data
 for var, label in model_features:
 	x = (var,label)
 	val = prep.create_cond_probs(train,val,x)
 
-#print(val.head())
 
 under50_cols = [col for col in val.columns if 'False' in col]
-x = pd.DataFrame(1,index=np.arange(len(val)),columns=['Under50_Score'])
+over50_cols = [col for col in val.columns if 'True' in col]
+val['Under50_Score'] = 1
+val['Over50_Score'] = 1
 
 for col in under50_cols:
-	print(col)
-	print(val[col].head())
-	x = val[col]*x
-print(x)
+	val['Under50_Score'] = val['Under50_Score'].multiply(val[col],axis=0)
+	
+for col in over50_cols:
+	val['Over50_Score'] = val['Over50_Score'].multiply(val[col],axis=0)
+
+def get_pred(row):
+	if row['Under50_Score'] > row['Over50_Score']:
+		return 'False'
+	else:
+		return 'True'
+			
+def assess_accuracy(row):
+	if row['pred'] == row['over_50_bool']:
+		return 'False'
+	else:
+		return 'True'
+			
+val['pred'] = val.apply(get_pred,axis=1)
+print(val['pred'].head())
+
+val['accurate'] = val.apply(assess_accuracy,axis=1)
+print(val['accurate'].value_counts())
+
 
 
 
