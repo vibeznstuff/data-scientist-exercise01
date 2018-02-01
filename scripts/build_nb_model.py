@@ -64,14 +64,6 @@ for col in under50_cols:
 for col in over50_cols:
 	val['Over50_Score'] = val['Over50_Score'].multiply(val[col],axis=0)
 
-#Multiply likelihood of target with conditional probabilities
-#from features
-def apply_likelihood(row):
-	if row['pred'] == True:
-		return row['Over50_Score']*target_probs[True]
-	else:
-		return row['Under50_Score']*target_probs[False]
-
 #Get predictions based on final target scores
 def get_pred(row):
 	if row['Under50_Score'] > row['Over50_Score']:
