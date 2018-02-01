@@ -30,9 +30,9 @@ def load_census_data():
 	#Function to convert target from numeric to categorical
 	def cat_target(row):
 		if row['over_50k'] == 0:
-			return 'False'
+			return False
 		elif row['over_50k'] == 1:
-			return 'True' 
+			return True 
 		else:
 			return np.NaN
 	
@@ -73,6 +73,15 @@ def bin_my_feature(row,in_var,bin_list):
 		elif i < n and row[in_var] >= x and row[in_var] < y:
 			out_label = str(x) + ' - ' + str(y)
 	return out_label
+	
+#Join conditional probabilities to validation data for scoring
+#by variable
+def create_cond_probs(train,validation,x):
+	variable,label = x
+	cond_probs = pd.crosstab(train[variable],train.over_50_bool).apply(lambda r: r/r.sum(),axis=0)
+	cond_probs.columns = ['P('+label+'|False)','P('+label+'|True)']
+	new_validation = validation.merge(right=cond_probs,how='inner',left_on=variable,right_index=True,sort=False)
+	return new_validation
 	
 
 
