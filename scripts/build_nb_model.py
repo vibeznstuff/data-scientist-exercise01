@@ -33,61 +33,72 @@ model_features = [('age_bins','age'),('education_num_gt_12','ed_lvl'), \
 	('hours_week_gt_40','hr_per_week'), ('cap_gain_gt_0','cap_gain'), \
 	('sex','sex'), ('race','race'),('occupation','occup'), \
 	('marital_status','MS')]
+	
+#Given training dataset and model features to be used,
+#generate predictions for a dataset to be scored.
+#test_val_flag used to indicate if scoring validation or test data
+def create_predictions(model_features,train_data,test_data,test_val_flag):
+	#Assign conditional probabilities to validation data
+	for var, label in model_features:
+		x = (var,label)
+		test_data = prep.create_cond_probs(train,test_data,x)
 
-#Assign conditional probabilities to validation data
-for var, label in model_features:
-	x = (var,label)
-	val = prep.create_cond_probs(train,val,x)
+	#Create percent frequencies for either target class
+	target_probs = test_data['over_50_bool'].value_counts(normalize=True).to_dict()
 
-#Create percent frequencies for either target class
-target_probs = val['over_50_bool'].value_counts(normalize=True).to_dict()
+	#Add target likelihoods to dataframe
+	test_data['True_Likelihood'] = target_probs[True]
+	test_data['False_Likelihood'] = target_probs[False]
 
-#Add target likelihoods to dataframe
-val['True_Likelihood'] = target_probs[True]
-val['False_Likelihood'] = target_probs[False]
+	#Extract conditional probabilities and target likelihoods by target
+	#for multiplying into each other
+	under50_cols = [col for col in test_data.columns if 'False' in col]
+	over50_cols = [col for col in test_data.columns if 'True' in col]
+	test_data['Under50_Score'] = 1
+	test_data['Over50_Score'] = 1
 
-#Extract conditional probabilities and target likelihoods by target
-#for multiplying into each other
-under50_cols = [col for col in val.columns if 'False' in col]
-over50_cols = [col for col in val.columns if 'True' in col]
-val['Under50_Score'] = 1
-val['Over50_Score'] = 1
+	# Multiply conditional probabilities under assumption
+	# respondent makes less than 50k
+	for col in under50_cols:
+		test_data['Under50_Score'] = test_data['Under50_Score'].multiply(test_data[col],axis=0)
 
+	# Multiply conditional probabilities under assumption
+	# respondent makes over than 50k
+	for col in over50_cols:
+		test_data['Over50_Score'] = test_data['Over50_Score'].multiply(test_data[col],axis=0)
 
-# Multiply conditional probabilities under assumption
-# respondent makes less than 50k
-for col in under50_cols:
-	val['Under50_Score'] = val['Under50_Score'].multiply(val[col],axis=0)
+	#Get predictions based on final target scores
+	def get_pred(row):
+		if row['Under50_Score'] > row['Over50_Score']:
+			return False
+		else:
+			return True
 
-# Multiply conditional probabilities under assumption
-# respondent makes over than 50k
-for col in over50_cols:
-	val['Over50_Score'] = val['Over50_Score'].multiply(val[col],axis=0)
+	#Compare predictions to actual target test_dataues
+	def assess_accuracy(row):
+		if row['pred'] == row['over_50_bool']:
+			return 'Accurate'
+		else:
+			return 'Inaccurate'
 
-#Get predictions based on final target scores
-def get_pred(row):
-	if row['Under50_Score'] > row['Over50_Score']:
-		return False
-	else:
-		return True
+	test_data['pred'] = test_data.apply(get_pred,axis=1)
+	test_data['accurate'] = test_data.apply(assess_accuracy,axis=1)
+	print('Model accuracy for '+test_val_flag+' set (' + str(len(test_data)) + " records):")
+	print(test_data['accurate'].value_counts(normalize=True))
 
-#Compare predictions to actual target values
-def assess_accuracy(row):
-	if row['pred'] == row['over_50_bool']:
-		return 'Accurate'
-	else:
-		return 'Inaccurate'
+	#Create new csv with updated, engineered data
+	test_data.to_csv('../output/'+test_val_flag+'_predictions.csv')
 
-val['pred'] = val.apply(get_pred,axis=1)
-val['accurate'] = val.apply(assess_accuracy,axis=1)
-print('Model accuracy for validation set:')
-print(val['accurate'].value_counts(normalize=True))
+	#Print out validation accuracy to csv file
+	test_data['accurate'].value_counts(normalize=True).to_csv('../output/'+test_val_flag+'_accuracy.csv')
 
-#Create new csv with updated, engineered data
-val.to_csv('../output/validation_predictions.csv')
+#Create predictions for validation data
+create_predictions(model_features,train,val,'Validation')
 
-#Print out validation accuracy to csv file
-val['accurate'].value_counts(normalize=True).to_csv('../output/validation_accuracy.csv')
+print("/n")
+
+#Create predictions for test data
+create_predictions(model_features,train,test,'Test')
 
 
 
